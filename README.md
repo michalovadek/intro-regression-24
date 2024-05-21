@@ -22,9 +22,9 @@ In my experience, one of the most important factors in learning stats and progra
 
 The broad outline for the course is the following:
 
-Tuesday, 28 May: Introduction to R
-Wednesday, 29 May: Quantitative research designs
-Thursday, 30 May: Linear and multiple regression
+- Tuesday, 28 May: Introduction to R
+- Wednesday, 29 May: Quantitative research designs
+- Thursday, 30 May: Linear and multiple regression
 
 In practice, I will adjust the material on the fly depending on how we are doing.
 
