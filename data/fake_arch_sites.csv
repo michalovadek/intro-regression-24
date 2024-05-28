@@ -1,0 +1,21 @@
+id,year_discovery,year_founded,latitude,longitude,site_type,country_now
+1,1923,1200 BCE,47.3667,8.55,Settlement,Switzerland
+2,1955,300 CE,52.52,13.405,Burial Site,Germany
+3,1980,400 BCE,41.9028,12.4964,Temple,Italy
+4,1967,1500 BCE,48.8566,2.3522,Fortress,France
+5,2001,700 CE,51.1657,10.4515,Village,Germany
+6,1938,50 BCE,55.7558,37.6173,Palace,Russia
+7,1975,200 CE,60.1695,24.9354,Trading Post,Finland
+8,1990,600 BCE,50.8503,4.3517,Temple,Belgium
+9,1942,1100 BCE,59.3293,18.0686,Settlement,Sweden
+10,1985,300 BCE,45.4654,9.1859,Fortress,Italy
+11,1978,800 CE,40.4168,-3.7038,Burial Site,Spain
+12,1950,900 BCE,53.5511,9.9937,Village,Germany
+13,2000,500 BCE,47.4979,19.0402,Palace,Hungary
+14,1930,2000 BCE,54.6872,25.2797,Fortress,Lithuania
+15,1995,1000 CE,50.0755,14.4378,Temple,Czechia
+16,1960,3000 BCE,55.6761,12.5683,Settlement,Denmark
+17,1928,700 BCE,48.2082,16.3738,Burial Site,Austria
+18,1970,150 CE,59.9139,10.7522,Trading Post,Norway
+19,2005,1200 CE,52.2297,21.0122,Village,Poland
+20,1982,400 CE,51.5074,-0.1278,Temple,UK
