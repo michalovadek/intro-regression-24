@@ -1,0 +1,690 @@
+---
+title: "Introduction to Regression Analysis"
+subtitle: "Social Data Institute, Day 2"
+author: "Michal Ovádek"
+date: ""
+format: revealjs
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+
+```
+
+## Today
+
+- revisit statistical foundations
+- discuss key ideas in causal inference
+- work with more data
+
+## Units and variables 
+
+There are 2 organising features of any data that we study: units and variables.
+
+**Units** ($i \in 1,...,N$)
+
+    -   The objects that we are studying
+    -   Usually these are the rows of the dataset
+    -   E.g. individuals; countries; companies; Members of Parliament; etc
+    -   We usually use $i$ to indicate a unit, and $N$ to mean the total number of units
+
+**Variables**
+
+    -   Measurements of characteristics that vary across units
+    -   Usually these are the columns of the dataset
+    -   E.g. age; income; vote choice; profit/loss; GDP; etc
+    
+## Dependent and independent variables
+
+An important conceptual distinction between types of variable:
+
+-   **Dependent variable (**$Y$)
+
+    -   Variable to be explained
+    -   Also called the outcome or response variable
+
+-   **Independent variables (**$X$)
+
+    -   Determinant(s) of the dependent variable
+    -   Also called the explanatory or predictor variables
+    -   Sometimes (somewhat confusingly) expressed as $T$ or $D$
+
+## Levels of measurement
+
+### Continuous/Interval 
+
+-   Values indicate precise differences between categories
+-   Differences (intervals) have the same meaning anywhere on the scale
+-   E.g age
+
+---
+
+### Categorical/Nominal 
+
+-   Values indicate different, mutually exclusive categories
+-   No relative information in the categories
+-   E.g political parties, gender
+
+---
+
+### Ordinal 
+
+- Values indicate relative differences between categories
+- Imply a ranking, but difference between categories may be unknown
+- E.g. educational achievement
+
+Determining the correct level of measurement is important for making decisions about how to analyse your data.
+
+## Sums and Sigma notation
+
+-   $N$ is the number of units or the **sample size**
+
+-   If $N = 100$, we have 100 measurements of each variable ($Y_1, Y_2, Y_3,...,Y_N$)
+
+-   We will often want to refer to the **sum** of a variable, e.g. $Y_1 + Y_2 + Y_3 + ... + Y_N$. But this gets cumbersome if $N$ is large!
+
+. . .
+
+-   Instead, we will often use **Sigma notation**: $$\sum_{i = 1}^N Y_i = Y_1 + Y_2 + Y_3 + ... + Y_N$$  where $\sum_{i=1}^N Y_i$ means "sum up all instances of $Y$ starting from 1 and ending at N".
+
+## Measures of central tendency
+
+To compare observations, we need some way of summarising their characteristics. The most common summaries for most variables are those that measure the **central tendency** of the variable.
+
+## Central Tendency
+
+The value of a "typical" observation, or the value of the observation at the center of a variable's distribution.
+
+We will consider three measures of central tendency:
+
+1.  Mean
+2.  Median
+3.  Mode
+
+## Mean
+
+The mean is the "average" or "expected" value of a variable.
+
+It is denoted $\bar{Y}$ or $\bar{X}$, which can be read as "Y bar" or "X bar".
+
+$$\bar{Y} = \frac{\sum_{i = 1}^N Y_i}{N} = \frac{1}{N}\sum_{i=1}^N Y_i$$
+
+. . .
+
+- I.e. we add up the values of $Y$ and divide by the sample size.
+
+## Median
+
+The median is the value of a variable that divides the data into two groups such that there are an equal number above and below.
+
+$$
+Median =
+\begin{cases}
+x_{((N+1)/2)} & \text{when N is odd}\\
+\frac{1}{2}\left( x_{(N/2)} + x_{(N/2+1)}\right) & \text{when N is even}
+\end{cases}
+$$
+
+where $x_{i}$ is the $i^{th}$ smallest value of variable $x$.
+
+. . .
+
+- I.e. the median is the middle value when the total number of observations is odd, and the average of the two middle values when the total number of observations is even
+
+## Mode
+
+The mode is simply the most common value of a variable.
+
+## Mean, Median or Mode?
+
+Which measure we use depends on the level of measurement:
+
+-   The **mean** is most appropriate for *continuous* variables
+-   The **median** is most appropriate for *ordinal* variables
+-   The **mode** is most appropriate for *categorical* variables
+
+Let's compute them for the British Election Study (BES) data.
+
+## Beyond the Central Tendency
+
+Central tendency is not the only potential summary we might care about.
+
+We may be interested in how the data is *distributed* *around* the measures of central tendency.
+
+## Quantiles
+
+- The `summary()` command provided the 0th, 25th, 50th (median), 75th and 100th percentile.
+    + The Xth "percentile" (0-100) is the value below which X percent of observations in a group of observations fall.
+    + The Xth "quantile" (0-1) is the value below which X proportion of observations in a group of observations fall.
+- You can request any specific quantile of the distribution you want
+    + The 5th, 50th and 95th percentiles are the 0.05, 0.5 and 0.95 quantiles, respectively.
+    
+## Summarising Dispersion
+
+How do we summarise *variation* or *dispersion* in a data set?
+
+How do we describe the difference between these distributions, all of which have the same mean/median?
+
+- 20, 20, 20, 20, 20
+- 15, 18, 20, 22, 25
+- 10, 15, 20, 25, 30
+- 0, 10, 20, 30, 40
+
+## Range
+
+One measure of dispersion is the range, the difference between the 0th and 100th percentile (or equivalently, the 0.00 and 1.00 quantile)
+
+- **20**, 20, 20, 20, **20** $\rightarrow$ 0
+- **15**, 18, 20, 22, **25** $\rightarrow$ 10
+- **10**, 15, 20, 25, **30** $\rightarrow$ 20
+- **0**, 10, 20, 30, **40** $\rightarrow$ 40
+
+This turns out to be a poor choice in practice, because it is very sensitive to changes in a single extreme value.
+
+## Interquartile Range
+
+A better measure of dispersion is the interquartile range, the difference between the 25th and 75th percentile (or equivalently, the 0.25th and 0.75th quantile)
+
+- 20, **20**, 20, **20**, 20 $\rightarrow$ 0
+- 15, **18**, 20, **22**, 25 $\rightarrow$ 4
+- 10, **15**, 20, **25**, 30 $\rightarrow$ 10
+- 0, **10**, 20, **30**, 40 $\rightarrow$ 20
+
+## Standard deviation
+
+While the interquartile range is easy to understand, far more frequently we use the *standard deviation* as a measure of dispersion.
+$$s = \sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$$
+---
+
+
+**Building the standard deviation:** Start with the difference between each observation and the mean:
+
+$$(x_i - \overline{x})$$
+
+---
+
+
+**Building the standard deviation:** Square these so that bigger deviations from the mean (whether positive or negative) are more positive numbers
+
+$$(x_i - \overline{x})^2$$
+
+---
+
+
+**Building the standard deviation:** Add them all up
+
+$$\sum_{i=1}^N (x_i - \overline{x})^2$$
+
+---
+
+**Building the standard deviation:** Divide by the number of things you added up (minus one, for technical reasons that need not concern us here).
+
+$$\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2$$
+
+---
+
+**Building the standard deviation:** Finally, take a square root to "undo" the square, so that the units of the standard deviation are on the original scale of $x$.
+
+$$\sqrt{\frac{1}{N-1} \sum_{i=1}^N (x_i - \overline{x})^2}$$
+
+## Interpreting the standard deviation
+
+- Larger standard deviations mean that the data are more dispersed / variable.
+- Smaller standard deviations mean that the data are less dispersed / variable.
+     + A standard deviation of 0 occurs only if all the observations have the same value.
+
+Let's now implement it in R on the BES data.
+
+## z-scores
+
+Sometimes it is useful to "standardize" variables in terms of their standard deviation.
+
+- This is typically done by calculating "z-scores"
+
+- This preserves the relative values of $x$, but the new variable $z$ then has a mean of exactly $0$ and a standard deviation of exactly $1$
+    
+$$ z_i = \frac{x_i - mean(x)}{sd(x)}$$
+
+## Dispersion in data
+
+```{r, echo = FALSE}
+
+load("data/bes.Rda")
+
+d1 <- rnorm(100, mean = 0, sd = 1)
+d2 <- rnorm(100, mean = 0, sd = 5)
+d3 <- rnorm(100, mean = 0, sd = 10)
+
+par(mfrow = c(3,1))
+plot(y = 1:100, x = d1, xlim = c(-25, 25), xlab = NA, ylab = NA)
+plot(y = 1:100, x = d2, xlim = c(-25, 25), xlab = NA, ylab = NA)
+plot(y = 1:100, x = d3, xlim = c(-25, 25), xlab = NA, ylab = NA)
+
+```
+
+## Histograms
+
+We will often use histograms to get an understanding of the distribution of a given variable.
+
+```{r, echo=TRUE}
+# create data
+random_sample <- data.frame(var = rnorm(1000, mean = 0, sd = 10))
+
+# plot
+random_sample |> 
+  ggplot(aes(x = var)) +
+  geom_histogram()
+```
+
+## Boxplots
+
+Boxplots are another common way to visualize data.
+
+```{r, echo=TRUE}
+bes |> 
+  ggplot(aes(y = age, x = turnout)) +
+  geom_boxplot()
+```
+
+## Correlation
+
+The most commonly used bivariate descriptive statistic is the *correlation coefficient*:
+
+$$
+      \rho =  \frac{1}{n-1} \sum_{i=1}^n \left(\frac{x_i - \bar{x}}{S_x} \times \frac{y_i - \bar{y}}{S_y}\right)
+$$
+
+The correlation coefficient describes the strength of association between two continuous variables.
+
+## Examples of correlation coefficients
+
+```{r,fig.width=12,fig.height=8}
+
+par(mfrow=c(2,3),mar=c(5,5,5,5))
+
+corr_to_plot <- c(-1,0,1,0.5,0.75,0.9)
+for (i in 1:6){
+  tmp <- MASS::mvrnorm(500,c(0,0),matrix(c(1,corr_to_plot[i],corr_to_plot[i],1),2,2))
+  plot(tmp[,1],tmp[,2],xlab="",ylab="",axes=FALSE,main=paste(expression(rho),"=",corr_to_plot[i]),col=rgb(0,0,0,0.5),pch=16)
+}
+
+```
+
+
+## What is a large correlation?
+
+- What can be considered a 'large' correlation?
+
+    + $\rho = 1$ is a perfect positive association
+    + $\rho = 0$ is no association
+    + $\rho = -1$ is a perfect negative association.
+    
+- There is no fixed translation of numbers to words that applies generally
+
+    + In some contexts $\rho=0.5$ is "strong", in others it is "moderate", in others it might be "weak". Do we have a sense of a baseline for comparison?
+
+# Causality and counterfactuals
+
+## Why causality?
+
+
+Cause-and-effect relationships are at the heart of some of the most interesting (social) science theories.
+
+. . .
+
+We can often express important research topics as a simple question: Does *X* cause *Y*?
+
+. . .
+
+-   Does *economic development* lead to *democracy*?
+-   Does the *race of a politician* affect their *chances of being elected*?
+-   Does *immigration* increase support for *right-wing parties*?
+-   Does *health insurance* lead to better *health*?
+
+## Example
+
+**Does health insurance improve health outcomes?**
+
+A critical issue of public policy is whether and how governments should provide health care to their citizens. But is there a *causal* effect of
+health insurance on actual levels of health?
+
+-   **Y (Dependent variable, or "outcome")**: *Health*
+
+    -   What is the self-assessed health of an individual?
+
+-   **X (Independent variable, or "treatment")**: *Health insurance*
+
+    -   Does the individual have health insurance, or not?
+
+## Counterfactuals
+
+Whenever a person makes a causal statement, they are contrasting (often implicitly)...
+
+1. what they observe (something *factual*) with 
+2. what they believe they would observe if a key condition was different (something *counterfactual*).
+
+-   "Austerity caused Brexit" ([Fetzer, 2019](https://warwick.ac.uk/fac/soc/economics/research/centres/cage/manage/publications/381-2018_fetzer.pdf))
+
+    -   Observation: Austerity policy in the UK and a vote to leave the EU
+    -   Belief: Without austerity, smaller Leave vote
+
+---
+
+-   "Oil wealth inhibits democracy" ([Ross, 2013](https://press.princeton.edu/titles/9686.html))
+
+    -   Observation: Oil-rich countries tend to be less democratic
+    -   Belief: If countries had less oil they would be more democratic
+    
+## Unseen Counterfactuals 
+
+- In our example: Health insurance $\rightarrow$ health
+
+    -   Observation: People with health insurance are healthier
+    -   Belief about counterfactual: If people had no health insurance, they would be less healthy \pause
+    - But we cannot observe the **same** person with *and* without insurance at once 
+    
+. . .
+
+Problem: We can't observe counterfactual outcomes! Causal inference requires *estimating* counterfactuals for comparison to realised outcomes.
+
+## Treatment and outcome
+
+We will think about causal relationships in terms of effects of **treatments** on outcomes.
+
+. . .
+
+-   Treatment: Where change originates
+-   Outcome: What is affected by change
+
+. . . 
+
+We will focus on binary treatment variables:
+
+-   $X_i$ is 1 if observation $i$ is treated
+-   $X_i$ is 0 if observation $i$ is not treated
+
+We will focus on continuous/interval outcome variables
+
+## Treatment and outcome (example)
+
+In our example:
+
+-   $X_i$ is 1 if individual $i$ has health insurance
+-   $X_i$ is 0 if individual $i$ does not have health insurance
+-   $Y_i$ is individual $i$'s health
+
+. . .
+
+Keep in mind: We can't observe counterfactual outcomes. Causal inference requires *estimating* counterfactuals for comparison to realised outcomes.
+
+## Potential outcomes and causal effects
+
+We can *define* the causal effect of an independent/treatment variable $X$ on an outcome variable $Y$ by considering the **potential** outcomes of $Y$.
+
+---
+
+### Potential outcomes
+
+The potential outcomes of $Y$ are the values of $Y$ that would be realised for different values of $X$. e.g.
+
+-   $Y_i(1)$ = the value $Y_i$ *would have been* if $X_i$ was equal to 1
+-   $Y_i(0)$ = the value $Y_i$ *would have been* if $X_i$ was equal to 0
+
+
+### Treatment effect
+
+For any given individual, if we could observe both potential outcomes, the treatment effect of X on Y for that individual can be calculated as $$Y_i(1) - Y_i(0)$$
+
+## Potential outcomes and causal effects (example)
+
+What are the potential outcomes in our health insurance example?
+
+-   $Y_i(1) =$ The health individual $i$ would have if the individual had health insurance
+-   $Y_i(0) =$ The health individual $i$ would have if the individual did not have health insurance
+
+---
+
+What are the treatment effects?
+
+-   If $Y_i(1) > Y_i(0)$ then insurance improves health
+-   If $Y_i(1) < Y_i(0)$ then insurance worsens health
+-   If $Y_i(1) = Y_i(0)$ then insurance has no effect on health
+
+## Potential outcomes and causal effects (example)
+
+-   $X_i = 1$ if the individual is insured, and $X_i=0$ if uninsured
+-   $Y_i(1)$ is the health of the individual if they were insured
+-   $Y_i(0)$ is the health of the individual if they were uninsured
+-   The treatment effect for an individual is $Y_i(1) - Y_i(0)$
+
+## Potential outcomes and causal effects (example)
+
+| Individual | $X_i$ |      $Y_i(1)$      |      $Y_i(0)$      |  Treatment effect  |
+|:----------:|:-----:|:---------------:|:--------------:|:----------------------:|
+|     1      |   1   | 5  | 3  | 2  |
+|     2      |   1   | 5  | 4  | 1  |
+|     3      |   0   | 3  | 3  | 0 |
+|     4      |   0   | 4 | 3 | 1 |
+
+Average treatment effect (ATE) = $\frac{2+1+0+1}{4} = \frac{4}{4} = 1$
+
+## The Fundamental Problem of Causal Inference
+
+**But** we cannot observe *both* potential outcomes for any individual!
+
+| Individual | $X_i$ |      $Y_i(1)$      |      $Y_i(0)$      |  Treatment effect  |
+|:----------:|:-----:|:---------------:|:--------------:|:----------------------:|
+|     1      |   1   | 5  | ?  | ?  |
+|     2      |   1   | 5  | ?  | ?  |
+|     3      |   0   | ?  | 3  | ? |
+|     4      |   0   | ? | 3 | ? |
+
+Average treatment effect (ATE) = ?
+
+
+## The Fundamental Problem of Causal Inference
+
+We only ever observe *one* potential outcome for a given individual, and our observed outcome depends on the status of our explanatory variable. We can never directly observe individual causal effects.
+
+### Consequences
+
+-   We cannot compute causal effects for individuals.
+-   We have to *estimate* counterfactuals for comparison to realised outcomes.
+
+## Quantity of Interest
+
+We want to estimate the **average treatment effect (ATE)**: $$\frac{1}{N}\sum_{i=1}^N \{Y_i(1) - Y_i(0)\}$$ But we can't observe $Y_i(1)$ *and*
+$Y_i(0)$ for any given unit! 
+
+. . . 
+
+One alternative is to use the **difference-in-means** to *estimate* the ATE: $$\bar{Y}_{X=1} - \bar{Y}_{X=0}$$ where $\bar{Y}_{X=1}$ and
+$\bar{Y}_{X=0}$ are the average *observed* outcomes for treated and control units, respectively.
+
+## Confounding
+
+The **difference-in-means** estimator is only unbiased if there is no confounding.
+
+Example 1: Causal effect of finance degree on income tax policy preferences
+
+-   Finding: People who study finance are more likely to prefer lower taxes
+-   Confounding: People who want to study finance might prefer lower income tax to begin with
+-   Direction of bias: Positive, we overstate the effect of a finance degree
+
+---
+
+Example 2: Causal effect of aspirin on headache symptoms
+
+-   Finding: People who take aspirin report worse headache symptoms
+-   Confounding: People who took aspirin had headaches to begin with
+-   Direction of bias: Negative, we understate the effectiveness of aspirin
+
+## **Does health insurance improve health outcomes?**
+
+The National Health Interview Survey (NHIS) is an annual survey of the US population that asks questions about health and health insurance. We are
+interested in two questions in particular:
+
+-   Y (Dependent variable): *health*
+
+    -   "Would you say your health in general is excellent (5), very good (4), good (3), fair (2), or poor (1)?"
+
+-   X (Independent variable): *insured*
+
+    -   "Do you have health insurance?"
+    
+## NHIS data
+
+```{r echo=TRUE}
+load("data/nhis.Rda")
+
+summary(nhis)
+
+# now estimate the ATE of insurance in R
+```
+
+## NHIS data
+
+1.  Can we interpret the difference in means here as causal?
+
+2.  How might we assess the possibility of confounding bias here?
+
+## Checking "balance"
+
+One implication of confounding:
+
+- Treatment and control units will be different with respect to characteristics other than the treatment.
+
+- We can check this by evaluating the degree of **balance** for treated and control units on different pre-treatment variables.
+
+Let's calculate balance in R.
+
+
+## Randomised experiments and observational studies
+
+
+::: columns
+::: {.column width="50%"}
+
+**Randomised experiments**
+
+- Units are randomly assigned to different X values
+- Researchers directly intervene in the world they study
+- Gold standard for causal inference
+
+:::
+
+::: {.column width="50%"}
+
+**Observational studies**
+
+- Units are assigned to X values "by nature"
+- Researchers observe, but do not intervene in, the world
+- Very commonly used in social science research
+
+:::
+:::
+
+
+## Randomisation and selection bias
+
+We saw previously that, in general, the difference-in-means will not be an unbiased estimate of the ATE because of confounding.
+
+Question: How can we avoid this problem?
+
+Answer: Conduct a randomised experiment!
+
+---
+
+### Key intuition
+
+Randomisation of treatment doesn't eliminate differences between individuals, but ensures that the mix of individuals being compared is the same on average.
+
+### Consequence
+
+We cannot use randomisation to calculate individual causal effects, but we can use it to estimate average causal effects.
+
+## Randomisation and selection bias
+
+When the treatment, $X$, is randomly assigned to units... 
+
+-   ... treated and untreated groups will be similar, on average, in terms of all characteristics (both observed and unobserved)
+-   ... the only *systematic* difference between the two will be the receipt of treatment
+-   ... the average outcome for controls will be similar to what *would have happened* for the treatment group if they had not been treated
+
+## Randomisation and selection bias
+
+Randomisation of the treatment makes the difference in group means an **unbiased** estimator of the true ATE.
+
+- It 'solves' the problem of confounding by not letting units *select* into treatment
+
+- *On average*, you can expect a randomised experiment to get the right answer
+
+- This does not guarantee that the answer you get from any particular randomisation will be exactly correct
+
+
+## Example: Experimental data
+
+The RAND Health Insurance Experiment (RAND) was an experiment conducted between 1974 and 1982 in the US. In this experiment, researchers *randomly
+allocated* individuals to receive health insurance.
+
+-   Y (Dependent variable): *health*
+
+    -   "Would you say your health in general is excellent (5), very good (4), good (3), fair (2), or poor (1)?"
+
+-   X (Independent variable): *insured*
+
+    -   Was the participant *randomly allocated* to receive health insurance?
+
+## RAND data
+
+```{r echo=TRUE}
+load("data/rand.Rda")
+
+summary(rand)
+
+# now estimate the ATE of insurance in R
+```
+
+## External and internal validity
+
+**Internal validity:** Can we interpret estimates in a study as causal? 
+
+-   Randomised experiments tend to have high internal validity
+
+    + $\rightarrow$ randomisation makes treatment and control groups similar on average
+    
+-   Observational studies tend to have lower internal validity
+
+    + $\rightarrow$ pre-treatment variables may differ between treatment and control
+
+## External and internal validity
+
+
+**External validity:** How generalizable are the conclusions of a study? 
+
+-   Randomised experiments tend to have lower external validity 
+
+    + $\rightarrow$ difficult to conduct on representative samples 
+    
+-   Observational studies tend to have higher external validity 
+
+    + $\rightarrow$ easier to use representative samples or the population itself
+
+## External vs internal validity
+
+::: columns
+::: {.column width="50%"}
+
+### Internal Validity
+
+Credibility of the results as *causal*.
+:::
+::: {.column width="50%"}
+
+### External Validity
+
+Credibility of the results as *generalisable*.
+:::
+:::
+
