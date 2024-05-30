@@ -722,5 +722,3 @@ What does $R^2$ not tell us?
 - Large $R^2$ does not imply a causal relationship
 
 - Low $R^2$ does not necessarily imply a useless regression
-
-
